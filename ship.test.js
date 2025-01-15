@@ -16,7 +16,7 @@ test("hit() does not increment hits beyond length", () => {
   const ship = new Ship(2);
   ship.hit();
   ship.hit();
-  ship.hit(); // Exceeds length
+  ship.hit();
   expect(ship.hits).toBe(2);
 });
 
