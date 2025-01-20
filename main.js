@@ -23,6 +23,7 @@ for (let i = 0; i < gridSize; i++) {
 let player = new Player();
 let computer = new Player();
 let currentTurn = null;
+let gameEnded = false;
 const playerAttackedCoords = new Set();
 
 function getRandomCoord() {
@@ -70,6 +71,7 @@ function clearGameboard(gameboard, boardElement) {
   boardElement.querySelectorAll(".cell").forEach((cell) => {
     cell.classList.remove("ship", "hit", "miss");
   });
+  playerAttackedCoords.clear();
 }
 
 function playTurn(coord) {
@@ -78,6 +80,7 @@ function playTurn(coord) {
     playerAttackedCoords.add(coordString);
     const { result } = player.attack(computer.gameboard, coord);
     updateBoard(computerBoard, coord, result);
+    console.log(`Player attacks ${coord}: ${result}`);
     gameInfo.textContent = `Player attacks ${coord}: ${result}`;
     currentTurn = "computer";
     setTimeout(computerTurn, 1000); // Delay for computer's turn
@@ -87,6 +90,7 @@ function playTurn(coord) {
 function computerTurn() {
   if (currentTurn === "computer") {
     const { coord, result } = computer.randomAttack(player.gameboard);
+    console.log("Computer attacks randomly:", coord, result);
     gameInfo.textContent = `Computer attacks ${coord}: ${result}`;
     updateBoard(playerBoard, coord, result);
     currentTurn = "player";
@@ -109,11 +113,15 @@ function updateBoard(boardElement, coord, result) {
 
 function checkGameOver() {
   if (player.gameboard.areAllShipsSunk()) {
-    gameInfo.textContent = "Computer wins!";
+    console.log("Computer wins!");
+    gameInfo.textContent = "Computer wins! Click 'Play' to start a new game.";
     currentTurn = null;
+    gameEnded = true;
   } else if (computer.gameboard.areAllShipsSunk()) {
-    gameInfo.textContent = "Player wins!";
+    console.log("Player wins!");
+    gameInfo.textContent = "Player wins! Click 'Play' to start a new game.";
     currentTurn = null;
+    gameEnded = true;
   }
 }
 
@@ -147,12 +155,14 @@ document.getElementById("play-btn").addEventListener("click", () => {
     return;
   }
 
-  if (currentTurn !== null) {
+  if (currentTurn !== null || gameEnded) {
+    // Reset the game to initial state
     clearGameboard(player.gameboard, playerBoard);
     clearGameboard(computer.gameboard, computerBoard);
     player = new Player();
     computer = new Player();
     currentTurn = null;
+    gameEnded = false;
     gameInfo.textContent = "Game reset. Please randomize ship placements.";
     return;
   }
