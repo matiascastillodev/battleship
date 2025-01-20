@@ -1,5 +1,4 @@
 import { Ship } from "./ship.js";
-import { Gameboard } from "./gameboard.js";
 import { Player } from "./player.js";
 
 const playerBoard = document.querySelector("#player-board");
@@ -24,6 +23,7 @@ for (let i = 0; i < gridSize; i++) {
 let player = new Player();
 let computer = new Player();
 let currentTurn = null;
+const playerAttackedCoords = new Set();
 
 function getRandomCoord() {
   return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
@@ -73,19 +73,21 @@ function clearGameboard(gameboard, boardElement) {
 }
 
 function playTurn(coord) {
-  if (currentTurn === "player") {
+  const coordString = coord.toString();
+  if (currentTurn === "player" && !playerAttackedCoords.has(coordString)) {
+    playerAttackedCoords.add(coordString);
     const { result } = player.attack(computer.gameboard, coord);
     updateBoard(computerBoard, coord, result);
-    console.log(`Player attacks ${coord}: ${result}`);
+    gameInfo.textContent = `Player attacks ${coord}: ${result}`;
     currentTurn = "computer";
-    setTimeout(computerTurn, 1000);
+    setTimeout(computerTurn, 1000); // Delay for computer's turn
   }
 }
 
 function computerTurn() {
   if (currentTurn === "computer") {
     const { coord, result } = computer.randomAttack(player.gameboard);
-    console.log("Computer attacks randomly:", coord, result);
+    gameInfo.textContent = `Computer attacks ${coord}: ${result}`;
     updateBoard(playerBoard, coord, result);
     currentTurn = "player";
     checkGameOver();
@@ -107,10 +109,10 @@ function updateBoard(boardElement, coord, result) {
 
 function checkGameOver() {
   if (player.gameboard.areAllShipsSunk()) {
-    console.log("Computer wins!");
+    gameInfo.textContent = "Computer wins!";
     currentTurn = null;
   } else if (computer.gameboard.areAllShipsSunk()) {
-    console.log("Player wins!");
+    gameInfo.textContent = "Player wins!";
     currentTurn = null;
   }
 }
