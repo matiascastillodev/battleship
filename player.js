@@ -3,27 +3,30 @@ import { Gameboard } from "./gameboard.js";
 class Player {
   constructor() {
     this.gameboard = new Gameboard();
+    this.attackedCoords = new Set();
   }
 
   attack(enemyBoard, coord) {
-    return enemyBoard.receiveAttack(coord);
+    const result = enemyBoard.receiveAttack(coord);
+    this.attackedCoords.add(coord.toString());
+    return result;
   }
 
   randomAttack(enemyBoard) {
-    let coord;
-    do {
-      coord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-    } while (
-      enemyBoard.missedHits.some(
-        ([x, y]) => x === coord[0] && y === coord[1]
-      ) ||
-      enemyBoard.ships.some((shipObj) =>
-        shipObj.coordinates.some(
-          ([sx, sy]) => sx === coord[0] && sy === coord[1]
-        )
-      )
+    const allCoords = Array.from({ length: 10 }, (_, x) =>
+      Array.from({ length: 10 }, (_, y) => [x, y])
+    ).flat();
+
+    const availableCoords = allCoords.filter(
+      ([x, y]) => !this.attackedCoords.has([x, y].toString())
     );
 
+    if (availableCoords.length === 0) {
+      throw new Error("No available coordinates to attack");
+    }
+
+    const coord =
+      availableCoords[Math.floor(Math.random() * availableCoords.length)];
     return this.attack(enemyBoard, coord);
   }
 }

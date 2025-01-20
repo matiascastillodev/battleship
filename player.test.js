@@ -23,3 +23,19 @@ test("computer makes a valid random attack", () => {
   const result = computer.randomAttack(player.gameboard);
   expect(["hit", "miss"]).toContain(result);
 });
+
+test("computer does not make duplicate random attacks", () => {
+  const player = new Player();
+  const computer = new Player();
+
+  const ship = new Ship(3);
+  player.gameboard.placeShip(ship, [0, 0], "horizontal");
+
+  const attackResults = new Set();
+  for (let i = 0; i < 100; i++) {
+    const result = computer.randomAttack(player.gameboard);
+    attackResults.add(result);
+  }
+
+  expect(attackResults.size).toBeGreaterThan(1);
+});

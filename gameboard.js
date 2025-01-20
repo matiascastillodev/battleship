@@ -25,7 +25,7 @@ class Gameboard {
     );
 
     if (!isValidPlacement) {
-      throw new Error("Invalid placement");
+      throw new Error("Invalid Placement");
     }
 
     this.ships.push({ ship, coordinates: shipCoords });
