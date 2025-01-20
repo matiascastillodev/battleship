@@ -83,7 +83,7 @@ function playTurn(coord) {
     console.log(`Player attacks ${coord}: ${result}`);
     gameInfo.textContent = `Player attacks ${coord}: ${result}`;
     currentTurn = "computer";
-    setTimeout(computerTurn, 1000); // Delay for computer's turn
+    setTimeout(computerTurn, 1000);
   }
 }
 
@@ -156,7 +156,6 @@ document.getElementById("play-btn").addEventListener("click", () => {
   }
 
   if (currentTurn !== null || gameEnded) {
-    // Reset the game to initial state
     clearGameboard(player.gameboard, playerBoard);
     clearGameboard(computer.gameboard, computerBoard);
     player = new Player();
