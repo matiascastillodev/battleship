@@ -9,7 +9,7 @@ class Player {
   attack(enemyBoard, coord) {
     const result = enemyBoard.receiveAttack(coord);
     this.attackedCoords.add(coord.toString());
-    return result;
+    return { coord, result };
   }
 
   randomAttack(enemyBoard) {
